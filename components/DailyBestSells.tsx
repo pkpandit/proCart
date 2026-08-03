@@ -5,10 +5,15 @@ import { motion } from "framer-motion";
 import { FaPlus } from "react-icons/fa6";
 import { useCart, MOCK_PRODUCTS } from "./CartContext";
 import { Rating } from "./ui/Rating";
+import Image from "next/image";
 
 export function DailyBestSells() {
   const { addToCart } = useCart();
-  const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 42, seconds: 18 });
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 14,
+    minutes: 42,
+    seconds: 18,
+  });
 
   // Mock Countdown Timer ticking down
   useEffect(() => {
@@ -27,7 +32,9 @@ export function DailyBestSells() {
     return () => clearInterval(interval);
   }, []);
 
-  const bestSellers = MOCK_PRODUCTS.filter((prod) => prod.id.startsWith("best-"));
+  const bestSellers = MOCK_PRODUCTS.filter((prod) =>
+    prod.id.startsWith("best-"),
+  );
 
   const pad = (num: number) => String(num).padStart(2, "0");
 
@@ -47,14 +54,16 @@ export function DailyBestSells() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="lg:col-span-3 h-[320px] lg:h-full min-h-[300px] rounded-2xl overflow-hidden relative group border border-border/40 shadow-xs flex flex-col justify-end p-6 text-left"
+          className="lg:col-span-3 h-80 lg:h-full min-h-75 rounded-2xl overflow-hidden relative group border border-border/40 shadow-xs flex flex-col justify-end p-6 text-left"
         >
-          <img
+          <Image
             src="/images/banner/banner-deal.jpg"
+            height={526}
+            width={376}
             alt=""
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
           <div className="relative z-10 space-y-3">
             <span className="bg-primary/20 border border-primary/20 text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               Mega Deal
@@ -95,7 +104,9 @@ export function DailyBestSells() {
               >
                 {/* Image */}
                 <div className="aspect-square w-full mb-3 flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden relative">
-                  <img
+                  <Image
+                    width={220}
+                    height={220}
                     src={product.images[0]}
                     alt={product.title}
                     className="max-h-full max-w-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
@@ -152,20 +163,36 @@ export function DailyBestSells() {
                 {/* Timer Box Grid */}
                 <div className="flex gap-1.5 mt-4">
                   <div className="flex-1 border border-border/40 bg-muted/30 rounded-lg p-1.5 text-center">
-                    <span className="block text-xs font-bold text-foreground font-mono leading-none mb-1">{getDaysLeft(product.id)}</span>
-                    <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">Days</span>
+                    <span className="block text-xs font-bold text-foreground font-mono leading-none mb-1">
+                      {getDaysLeft(product.id)}
+                    </span>
+                    <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">
+                      Days
+                    </span>
                   </div>
                   <div className="flex-1 border border-border/40 bg-muted/30 rounded-lg p-1.5 text-center">
-                    <span className="block text-xs font-bold text-foreground font-mono leading-none mb-1">{pad(timeLeft.hours)}</span>
-                    <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">Hours</span>
+                    <span className="block text-xs font-bold text-foreground font-mono leading-none mb-1">
+                      {pad(timeLeft.hours)}
+                    </span>
+                    <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">
+                      Hours
+                    </span>
                   </div>
                   <div className="flex-1 border border-border/40 bg-muted/30 rounded-lg p-1.5 text-center">
-                    <span className="block text-xs font-bold text-foreground font-mono leading-none mb-1">{pad(timeLeft.minutes)}</span>
-                    <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">Mins</span>
+                    <span className="block text-xs font-bold text-foreground font-mono leading-none mb-1">
+                      {pad(timeLeft.minutes)}
+                    </span>
+                    <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">
+                      Mins
+                    </span>
                   </div>
                   <div className="flex-1 border border-border/40 bg-muted/30 rounded-lg p-1.5 text-center">
-                    <span className="block text-xs font-bold text-foreground font-mono leading-none mb-1">{pad(timeLeft.seconds)}</span>
-                    <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">Secs</span>
+                    <span className="block text-xs font-bold text-foreground font-mono leading-none mb-1">
+                      {pad(timeLeft.seconds)}
+                    </span>
+                    <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">
+                      Secs
+                    </span>
                   </div>
                 </div>
               </motion.div>

@@ -56,16 +56,16 @@ export function CategoryCarousel() {
             viewport={{ once: true }}
             transition={{ duration: 0.3, delay: idx * 0.05 }}
             whileHover={{ y: -4 }}
-            className="flex-1 min-w-[140px] md:min-w-[170px] bg-card border border-border rounded-2xl p-5 flex flex-col items-center justify-center text-center hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer group"
+            className="flex-1 min-w-35 md:min-w-42.5 bg-card border border-border rounded-2xl p-5 flex flex-col items-center justify-center text-center hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer group"
             onClick={() => alert(`Selected Category: ${cat.name}`)}
           >
             {/* Image Container (Rectangular/Square) */}
             <div className="w-full aspect-square max-h-32 mb-4 flex items-center justify-center p-2 rounded-lg overflow-hidden bg-muted/20">
               <Image
+                height={120}
+                width={120}
                 src={cat.image}
                 alt={cat.name}
-                width={128}
-                height={128}
                 className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
               />
             </div>

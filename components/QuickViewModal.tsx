@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa6";
 import { useCart } from "./CartContext";
 import { Dialog } from "./ui/Dialog";
 import { Rating } from "./ui/Rating";
+import Image from "next/image";
 
 export function QuickViewModal() {
   const {
@@ -69,7 +70,13 @@ export function QuickViewModal() {
                       : "border-border hover:border-muted-foreground/30"
                   }`}
                 >
-                  <img src={img} alt="" className="max-h-full max-w-full object-contain" />
+                  <Image
+                    src={img}
+                    alt=""
+                    height={220}
+                    width={220}
+                    className="max-h-full max-w-full object-contain"
+                  />
                 </button>
               ))}
             </div>
@@ -117,7 +124,10 @@ export function QuickViewModal() {
 
           {/* Mock Description */}
           <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-            FreshCart offers the finest selection of grocery products, sourced fresh and delivered straight to your door. This premium product is packed with nutrients, fresh, and meets our strict organic guidelines. Save time and shop local!
+            FreshCart offers the finest selection of grocery products, sourced
+            fresh and delivered straight to your door. This premium product is
+            packed with nutrients, fresh, and meets our strict organic
+            guidelines. Save time and shop local!
           </p>
 
           {/* Sizes / Units */}
@@ -193,7 +203,13 @@ export function QuickViewModal() {
           <div className="mt-6 pt-4 border-t border-border/50 grid grid-cols-2 gap-y-1.5 text-xs text-muted-foreground font-medium">
             <div>
               <span>Status: </span>
-              <span className={product.inStock ? "text-green-600 dark:text-green-400" : "text-red-500"}>
+              <span
+                className={
+                  product.inStock
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-red-500"
+                }
+              >
                 {product.inStock ? "In Stock" : "Out of Stock"}
               </span>
             </div>

@@ -30,15 +30,15 @@ export function PromoBanners() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: idx * 0.1 }}
-          className="relative h-[200px] md:h-[220px] rounded-2xl overflow-hidden border border-border/30 bg-[#f0f3f2] group shadow-xs cursor-pointer"
+          className="relative h-50 md:h-55 rounded-2xl overflow-hidden border border-border/30 bg-[#f0f3f2] group shadow-xs cursor-pointer"
           onClick={() => alert(`Navigating to: ${banner.title}`)}
         >
           {/* Background Image */}
           <Image
             src={banner.image}
             alt=""
-            height={220}
-            width={400}
+            height={781}
+            width={300}
             priority
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
           />
@@ -49,7 +49,9 @@ export function PromoBanners() {
               {banner.title}
             </h3>
             <p className="text-xs md:text-sm font-medium text-gray-500">
-              Get Upto <span className="font-bold text-gray-900">{banner.discount}</span> Off
+              Get Upto{" "}
+              <span className="font-bold text-gray-900">{banner.discount}</span>{" "}
+              Off
             </p>
             <button className="px-4 py-2 bg-[#212529] text-white hover:bg-[#212529]/90 text-xs font-bold rounded-lg shadow-xs transition-colors mt-2 cursor-pointer w-max">
               {banner.btnText}

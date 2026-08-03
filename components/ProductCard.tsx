@@ -6,6 +6,7 @@ import { IoEyeOutline, IoHeart, IoHeartOutline } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa6";
 import { useCart, Product } from "./CartContext";
 import { Rating } from "./ui/Rating";
+import Image from "next/image";
 
 interface ProductCardProps {
   product: Product;
@@ -17,11 +18,16 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const getBadgeColor = (type: string) => {
     switch (type) {
-      case "hot": return "bg-red-500 text-white";
-      case "sale": return "bg-orange-500 text-white";
-      case "new": return "bg-blue-500 text-white";
-      case "discount": return "bg-green-600 text-white";
-      default: return "bg-gray-500 text-white";
+      case "hot":
+        return "bg-red-500 text-white";
+      case "sale":
+        return "bg-orange-500 text-white";
+      case "new":
+        return "bg-blue-500 text-white";
+      case "discount":
+        return "bg-green-600 text-white";
+      default:
+        return "bg-gray-500 text-white";
     }
   };
 
@@ -35,15 +41,19 @@ export function ProductCard({ product }: ProductCardProps) {
     >
       {/* Badge */}
       {product.badge && (
-        <span className={`absolute top-3 left-3 z-10 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getBadgeColor(product.badge.type)}`}>
+        <span
+          className={`absolute top-3 left-3 z-10 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getBadgeColor(product.badge.type)}`}
+        >
           {product.badge.text}
         </span>
       )}
 
       {/* Image Container with Actions */}
       <div className="relative aspect-square w-full mb-4 flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden">
-        <img
+        <Image
           src={product.images[0]}
+          height={800}
+          width={800}
           alt={product.title}
           className="object-contain max-h-full max-w-full group-hover:scale-105 transition-transform duration-300 p-2"
           loading="lazy"

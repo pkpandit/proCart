@@ -8,20 +8,15 @@ import { useCart, MOCK_PRODUCTS } from "./CartContext";
 import { Drawer } from "./ui/Drawer";
 
 export function WishlistDrawer() {
-  const {
-    wishlist,
-    wishlistOpen,
-    setWishlistOpen,
-    toggleWishlist,
-    addToCart,
-  } = useCart();
+  const { wishlist, wishlistOpen, setWishlistOpen, toggleWishlist, addToCart } =
+    useCart();
 
   // Find actual products in the wishlist
   const wishlistProducts = wishlist
     .map((id) => MOCK_PRODUCTS.find((p) => p.id === id))
-    .filter((p): p is typeof MOCK_PRODUCTS[0] => !!p);
+    .filter((p): p is (typeof MOCK_PRODUCTS)[0] => !!p);
 
-  const handleAddToCart = (product: typeof MOCK_PRODUCTS[0]) => {
+  const handleAddToCart = (product: (typeof MOCK_PRODUCTS)[0]) => {
     addToCart(product, 1);
   };
 
@@ -60,7 +55,7 @@ export function WishlistDrawer() {
               <h4 className="text-base font-semibold font-heading mb-1 text-foreground">
                 Your wishlist is empty
               </h4>
-              <p className="text-xs text-muted-foreground max-w-[200px]">
+              <p className="text-xs text-muted-foreground max-w-50">
                 Save items you like to your wishlist to keep track of them!
               </p>
             </div>

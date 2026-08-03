@@ -8,13 +8,8 @@ import { useCart } from "./CartContext";
 import { Drawer } from "./ui/Drawer";
 
 export function CartDrawer() {
-  const {
-    cart,
-    cartOpen,
-    setCartOpen,
-    updateCartQuantity,
-    removeFromCart,
-  } = useCart();
+  const { cart, cartOpen, setCartOpen, updateCartQuantity, removeFromCart } =
+    useCart();
 
   return (
     <Drawer
@@ -56,7 +51,7 @@ export function CartDrawer() {
               <h4 className="text-base font-semibold font-heading mb-1 text-foreground">
                 Your cart is empty
               </h4>
-              <p className="text-xs text-muted-foreground max-w-[200px]">
+              <p className="text-xs text-muted-foreground max-w-50">
                 Add items to your cart to see them here and start shopping!
               </p>
             </div>
@@ -109,16 +104,26 @@ export function CartDrawer() {
                       {/* Quantity Adjuster */}
                       <div className="flex items-center border border-gray-300 dark:border-border/60 rounded-md overflow-hidden bg-card text-xs">
                         <button
-                          onClick={() => updateCartQuantity(item.product.id, item.quantity - 1)}
+                          onClick={() =>
+                            updateCartQuantity(
+                              item.product.id,
+                              item.quantity - 1,
+                            )
+                          }
                           className="px-2.5 py-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer font-bold"
                         >
                           -
                         </button>
-                        <span className="px-2 font-bold text-foreground min-w-[18px] text-center select-none">
+                        <span className="px-2 font-bold text-foreground min-w-4.5 text-center select-none">
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateCartQuantity(item.product.id, item.quantity + 1)}
+                          onClick={() =>
+                            updateCartQuantity(
+                              item.product.id,
+                              item.quantity + 1,
+                            )
+                          }
                           className="px-2.5 py-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer font-bold"
                         >
                           +
@@ -127,12 +132,21 @@ export function CartDrawer() {
 
                       {/* Price / Total */}
                       <div className="text-right">
-                        <span className={item.product.id === "popular-2" ? "text-xs font-extrabold text-red-600 block" : "text-xs font-extrabold text-foreground block"}>
+                        <span
+                          className={
+                            item.product.id === "popular-2"
+                              ? "text-xs font-extrabold text-red-600 block"
+                              : "text-xs font-extrabold text-foreground block"
+                          }
+                        >
                           ${(item.product.price * item.quantity).toFixed(2)}
                         </span>
                         {item.product.originalPrice && (
                           <span className="text-[10px] text-muted-foreground line-through block mt-0.5">
-                            ${(item.product.originalPrice * item.quantity).toFixed(2)}
+                            $
+                            {(
+                              item.product.originalPrice * item.quantity
+                            ).toFixed(2)}
                           </span>
                         )}
                       </div>

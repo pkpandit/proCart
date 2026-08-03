@@ -9,14 +9,16 @@ const SLIDES = [
     id: 1,
     badge: "Opening Sale Discount 50%",
     title: "SuperMarket For Fresh Grocery",
-    subtitle: "Introduced a new model for online grocery shopping and convenient home delivery.",
+    subtitle:
+      "Introduced a new model for online grocery shopping and convenient home delivery.",
     image: "/images/slider/slide-1.jpg",
   },
   {
     id: 2,
     badge: "Free Shipping - orders over $100",
     title: "Free Shipping on orders over $100",
-    subtitle: "Free Shipping to First-Time Customers Only, After promotions and discounts are applied.",
+    subtitle:
+      "Free Shipping to First-Time Customers Only, After promotions and discounts are applied.",
     image: "/images/slider/slider-2.jpg",
   },
 ];
@@ -41,7 +43,7 @@ export function HeroCarousel() {
   const slide = SLIDES[currentSlide];
 
   return (
-    <div className="relative w-full h-[320px] md:h-[450px] overflow-hidden rounded-2xl border border-border/40 group shadow-xs">
+    <div className="relative w-full h-80 md:h-112.5 overflow-hidden rounded-2xl border border-border/40 group shadow-xs">
       <AnimatePresence mode="wait">
         <motion.div
           key={slide.id}
@@ -68,7 +70,7 @@ export function HeroCarousel() {
                   <span className="text-primary font-bold">$100</span>
                 </h1>
               ) : (
-                <h1 className="text-[#21313c] text-3xl lg:text-5xl font-bold leading-tight font-heading">
+                <h1 className="text-[#21313c] text-2xl lg:text-5xl font-bold leading-tight font-heading">
                   {slide.title}
                 </h1>
               )}
