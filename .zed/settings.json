@@ -1,0 +1,9 @@
+{
+  "colorize_brackets": false,
+  "inlay_hints": {
+    "show_background": false,
+    "enabled": true
+  },
+  "format_on_save": "on",
+  "soft_wrap": "editor_width"
+}
