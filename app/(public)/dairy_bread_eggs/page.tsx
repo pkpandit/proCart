@@ -1,5 +1,5 @@
 import React from "react";
-import TitlePage from "@/components/home/TitlePage";
+import TitlePage from "@/components/page-title/TitlePage";
 const dairy_bread_eggs = () => {
   return (
     <header className="flex-1 max-w-7xl mx-auto w-full px-4 py-8 space-y-12">

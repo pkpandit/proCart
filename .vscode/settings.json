@@ -3,5 +3,8 @@
   "editor.formatOnSave": true,
   "files.autoSave": "onFocusChange",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.wordWrap": "on"
+  "editor.wordWrap": "on",
+  "editor.fontWeight": "500",
+  "editor.lineHeight": 32,
+  "editor.fontFamily": "\"Cascadia Code\", sans-serif;"
 }

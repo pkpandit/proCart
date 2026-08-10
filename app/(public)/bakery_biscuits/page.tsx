@@ -1,4 +1,4 @@
-import TitlePage from "@/components/home/TitlePage";
+import TitlePage from "@/components/page-title/TitlePage";
 
 const bakery_biscuits = () => {
   return (

@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { SearchInput } from "./SearchInput";
 import { LocationSelector } from "./LocationSelector";
+import { useCart } from "@/components/cart/CartContext";
+import { MOBILE_NAV_LINKS, NavigationLink } from "@/data/navigation";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -12,6 +14,15 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const { setAuthModalOpen } = useCart();
+
+  const handleLinkClick = (link: NavigationLink) => {
+    onClose();
+    if (link.isAction && link.label === "Account") {
+      setAuthModalOpen(true);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -29,18 +40,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
           {/* Mobile Nav Links */}
           <nav className="flex flex-col gap-3 text-sm font-bold text-muted-foreground">
-            {["Home", "Shop", "Stores", "Pages", "Account", "Dashboard"].map(
-              (link) => (
-                <Link
-                  key={link}
-                  href="#"
-                  onClick={onClose}
-                  className="hover:text-primary transition-colors py-1.5 border-b border-border/30 block"
-                >
-                  {link}
-                </Link>
-              )
-            )}
+            {MOBILE_NAV_LINKS.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => handleLinkClick(link)}
+                className="hover:text-primary transition-colors py-1.5 border-b border-border/30 block"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
         </motion.div>
       )}

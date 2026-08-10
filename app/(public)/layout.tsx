@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins, Geist_Mono } from "next/font/google";
 import "../style/globals.css";
-import { Navbar } from "@/components/layout/Navbar";
+import { Navbar } from "@/components/navbar/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartContext";
 import { WishlistProvider } from "@/components/wishlist/WishlistContext";

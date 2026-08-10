@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import { IoMenuOutline } from "react-icons/io5";
 import Image from "next/image";
 import Link from "next/link";
-import { SearchInput } from "../navbar/SearchInput";
-import { LocationSelector } from "../navbar/LocationSelector";
-import { NavbarActions } from "../navbar/NavbarActions";
-import { DepartmentsDropdown } from "../navbar/DepartmentsDropdown";
-import { MobileMenu } from "../navbar/MobileMenu";
+import { SearchInput } from "./SearchInput";
+import { LocationSelector } from "./LocationSelector";
+import { NavbarActions } from "./NavbarActions";
+import { DepartmentsDropdown } from "./DepartmentsDropdown";
+import { MobileMenu } from "./MobileMenu";
+import { DESKTOP_NAV_LINKS } from "@/data/navigation";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -112,13 +113,13 @@ export function Navbar() {
 
             {/* Nav Links */}
             <nav className="flex items-center gap-6 text-xs font-bold text-muted-foreground">
-              {["Home", "Shop", "Stores", "Dashboard"].map((link) => (
+              {DESKTOP_NAV_LINKS.map((link) => (
                 <Link
-                  key={link}
-                  href={link === "Home" ? "/" : `/${link.toLowerCase()}`}
+                  key={link.label}
+                  href={link.href}
                   className="hover:text-primary transition-colors"
                 >
-                  {link}
+                  {link.label}
                 </Link>
               ))}
             </nav>

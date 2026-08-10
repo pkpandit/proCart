@@ -2,30 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { IoTimeOutline, IoGiftOutline, IoLayersOutline, IoRefreshOutline } from "react-icons/io5";
-
-const HIGHLIGHTS = [
-  {
-    icon: <IoTimeOutline className="size-6 text-primary" />,
-    title: "10 minute grocery now",
-    desc: "Get your order delivered to your doorstep at lightning fast speed in under 10 minutes.",
-  },
-  {
-    icon: <IoGiftOutline className="size-6 text-primary" />,
-    title: "Best Prices & Offers",
-    desc: "Cheaper prices than your local supermarket, plus great cashback coupons and rewards.",
-  },
-  {
-    icon: <IoLayersOutline className="size-6 text-primary" />,
-    title: "Wide Assortment",
-    desc: "Choose from 5,000+ products across food, personal care, household, and other items.",
-  },
-  {
-    icon: <IoRefreshOutline className="size-6 text-primary" />,
-    title: "Easy Returns",
-    desc: "Not satisfied with a product? Return it at the doorstep and get a refund instantly.",
-  },
-];
+import { HIGHLIGHTS } from "@/data/services";
 
 export function ServiceHighlights() {
   return (
@@ -42,7 +19,7 @@ export function ServiceHighlights() {
         >
           {/* Icon Container */}
           <div className="size-12 rounded-xl bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-            {item.icon}
+            <item.icon className="size-6 text-primary" />
           </div>
 
           {/* Texts */}
