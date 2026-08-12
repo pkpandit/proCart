@@ -3,7 +3,7 @@ import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { CategoryCarousel } from "@/components/home/CategoryCarousel";
 import { PromoBanners } from "@/components/home/PromoBanners";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { DailyBestSells } from "@/components/daily-best/DailyBestSells";
+import { DailyBestSellers } from "@/components/daily-best/DailyBestSellers";
 import { ServiceHighlights } from "@/components/home/ServiceHighlights";
 
 export default function Home() {
@@ -22,7 +22,7 @@ export default function Home() {
       <ProductGrid />
 
       {/* Daily Best Sellers with progress bars & countdown timer */}
-      <DailyBestSells />
+      <DailyBestSellers />
 
       {/* Reusable Service Info Features list */}
       <ServiceHighlights />

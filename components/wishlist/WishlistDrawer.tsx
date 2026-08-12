@@ -4,8 +4,8 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { IoTrashOutline } from "react-icons/io5";
-import { useCart } from "@/components/cart/CartContext";
-import { useWishlist } from "@/components/wishlist/WishlistContext";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 import { MOCK_PRODUCTS } from "@/data/products";
 import { Drawer } from "@/components/ui/Drawer";
 

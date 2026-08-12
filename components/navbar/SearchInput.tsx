@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { IoSearchOutline } from "react-icons/io5";
-import { useCart } from "@/components/cart/CartContext";
+import { useCart } from "@/contexts/CartContext";
 
 interface SearchInputProps {
   variant?: "desktop" | "mobile";

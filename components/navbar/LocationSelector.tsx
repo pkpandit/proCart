@@ -2,7 +2,7 @@
 
 import React from "react";
 import { IoLocationOutline, IoChevronDownOutline } from "react-icons/io5";
-import { useCart } from "@/components/cart/CartContext";
+import { useCart } from "@/contexts/CartContext";
 
 interface LocationSelectorProps {
   variant?: "desktop" | "mobile";

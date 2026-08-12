@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "./ProductCard";
-import { useCart } from "@/components/cart/CartContext";
+import { useCart } from "@/contexts/CartContext";
 import { MOCK_PRODUCTS } from "@/data/products";
 
 const CATEGORIES = ["All", "Dairy, Bread & Eggs", "Snacks & Munchies", "Fruits & Vegetables", "Instant Food"];

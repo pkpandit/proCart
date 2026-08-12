@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { SearchInput } from "./SearchInput";
 import { LocationSelector } from "./LocationSelector";
-import { useCart } from "@/components/cart/CartContext";
+import { useCart } from "@/contexts/CartContext";
 import { MOBILE_NAV_LINKS, NavigationLink } from "@/data/navigation";
 
 interface MobileMenuProps {

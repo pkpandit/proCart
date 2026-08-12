@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { IoSearchOutline, IoCheckmark } from "react-icons/io5";
-import { useCart } from "@/components/cart/CartContext";
+import { useCart } from "@/contexts/CartContext";
 import { Dialog } from "@/components/ui/Dialog";
 
 const CITIES = [

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useCart } from "@/components/cart/CartContext";
+import { useCart } from "@/contexts/CartContext";
 import { Dialog } from "@/components/ui/Dialog";
 
 export function AuthModal() {

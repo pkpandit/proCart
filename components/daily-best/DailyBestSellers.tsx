@@ -5,7 +5,7 @@ import { MOCK_PRODUCTS } from "@/data/products";
 import { DailyBestBanner } from "./DailyBestBanner";
 import { DailyBestCard } from "./DailyBestCard";
 
-export function DailyBestSells() {
+export function DailyBestSellers() {
   const bestSellers = MOCK_PRODUCTS.filter((prod) =>
     prod.id.startsWith("best-")
   );
@@ -15,7 +15,7 @@ export function DailyBestSells() {
       {/* Heading */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 className="text-xl md:text-2xl font-extrabold font-heading text-foreground tracking-tight">
-          Daily Best Sells
+          Daily Best Sellers
         </h2>
       </div>
 

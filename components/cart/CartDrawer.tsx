@@ -4,11 +4,11 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { IoTrashOutline } from "react-icons/io5";
-import { useCart } from "./CartContext";
+import { useCart } from "@/contexts/CartContext";
 import { Drawer } from "@/components/ui/Drawer";
 
 export function CartDrawer() {
-  const { cart, cartOpen, setCartOpen, updateCartQuantity, removeFromCart } =
+  const { cartItems, cartOpen, setCartOpen, increaseQuantity, decreaseQuantity, removeFromCart } =
     useCart();
 
   return (
@@ -30,7 +30,7 @@ export function CartDrawer() {
 
         {/* Cart Items List */}
         <div className="flex-1 overflow-y-auto min-h-0 pr-1">
-          {cart.length === 0 ? (
+          {cartItems.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6">
               <div className="w-24 h-24 mb-4 rounded-full bg-muted/50 flex items-center justify-center text-muted-foreground">
                 <svg
@@ -58,7 +58,7 @@ export function CartDrawer() {
           ) : (
             <div className="space-y-0 divide-y divide-border/60">
               <AnimatePresence initial={false}>
-                {cart.map((item) => (
+                {cartItems.map((item) => (
                   <motion.div
                     key={item.product.id}
                     initial={{ opacity: 0, height: 0 }}
@@ -104,12 +104,7 @@ export function CartDrawer() {
                       {/* Quantity Adjuster */}
                       <div className="flex items-center border border-gray-300 dark:border-border/60 rounded-md overflow-hidden bg-card text-xs">
                         <button
-                          onClick={() =>
-                            updateCartQuantity(
-                              item.product.id,
-                              item.quantity - 1,
-                            )
-                          }
+                          onClick={() => decreaseQuantity(item.product.id)}
                           className="px-2.5 py-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer font-bold"
                         >
                           -
@@ -118,12 +113,7 @@ export function CartDrawer() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() =>
-                            updateCartQuantity(
-                              item.product.id,
-                              item.quantity + 1,
-                            )
-                          }
+                          onClick={() => increaseQuantity(item.product.id)}
                           className="px-2.5 py-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer font-bold"
                         >
                           +
@@ -159,7 +149,7 @@ export function CartDrawer() {
         </div>
 
         {/* Cart Summary */}
-        {cart.length > 0 && (
+        {cartItems.length > 0 && (
           <div className="pt-4 mt-4 bg-card">
             {/* Actions */}
             <div className="grid grid-cols-2 gap-3">

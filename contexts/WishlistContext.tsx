@@ -2,13 +2,13 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-interface WishlistContextType {
+type WishlistContextType = {
   wishlist: string[];
   wishlistOpen: boolean;
   setWishlistOpen: (open: boolean) => void;
   toggleWishlist: (productId: string) => void;
   isWishlisted: (productId: string) => boolean;
-}
+};
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
@@ -21,6 +21,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     "popular-5",
   ]);
   const [wishlistOpen, setWishlistOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Load wishlist from localStorage on mount (client-side only)
   useEffect(() => {
@@ -28,17 +29,21 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     if (savedWishlist) {
       try {
         const parsed = JSON.parse(savedWishlist);
-        Promise.resolve().then(() => setWishlist(parsed));
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setWishlist(parsed);
       } catch (e) {
         console.error(e);
       }
     }
+    setIsHydrated(true);
   }, []);
 
   // Save wishlist to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("freshcart_wishlist", JSON.stringify(wishlist));
-  }, [wishlist]);
+    if (isHydrated) {
+      localStorage.setItem("freshcart_wishlist", JSON.stringify(wishlist));
+    }
+  }, [wishlist, isHydrated]);
 
   const toggleWishlist = (productId: string) => {
     setWishlist((prev) =>

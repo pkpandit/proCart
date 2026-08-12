@@ -13,8 +13,9 @@ import {
 
 export type { Product, CartItem };
 
-interface CartContextType {
+type CartContextType = {
   cart: CartItem[];
+  cartItems: CartItem[];
   location: string;
   searchQuery: string;
   quickViewProduct: Product | null;
@@ -25,6 +26,8 @@ interface CartContextType {
   addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateCartQuantity: (productId: string, quantity: number) => void;
+  increaseQuantity: (productId: string) => void;
+  decreaseQuantity: (productId: string) => void;
   clearCart: () => void;
   changeLocation: (newLocation: string) => void;
   openQuickView: (product: Product) => void;
@@ -34,7 +37,9 @@ interface CartContextType {
   setCartOpen: (open: boolean) => void;
   cartTotal: number;
   cartCount: number;
-}
+  getCartTotal: () => number;
+  getCartItemCount: () => number;
+};
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -43,6 +48,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const defaultProducts = MOCK_PRODUCTS.slice(0, 5);
     return defaultProducts.map((p) => ({ product: p, quantity: 1 }));
   });
+  const [isHydrated, setIsHydrated] = useState(false);
   const [location, setLocation] = useState("Chicago, IL");
   const [searchQuery, setSearchQuery] = useState("");
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
@@ -58,20 +64,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (savedCart) {
       try {
         const parsed = JSON.parse(savedCart);
-        Promise.resolve().then(() => setCart(parsed));
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCart(parsed);
       } catch (e) {
         console.error(e);
       }
     }
     if (savedLocation) {
-      Promise.resolve().then(() => setLocation(savedLocation));
+      setLocation(savedLocation);
     }
+    setIsHydrated(true);
   }, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("freshcart_cart", JSON.stringify(cart));
-  }, [cart]);
+    if (isHydrated) {
+      localStorage.setItem("freshcart_cart", JSON.stringify(cart));
+    }
+  }, [cart, isHydrated]);
 
   const addToCart = (product: Product, quantity = 1) => {
     setCart((prev) => addToCartHelper(prev, product, quantity));
@@ -83,6 +93,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const updateCartQuantity = (productId: string, quantity: number) => {
     setCart((prev) => updateCartQuantityHelper(prev, productId, quantity));
+  };
+
+  const increaseQuantity = (productId: string) => {
+    setCart((prev) => {
+      const item = prev.find((i) => i.product.id === productId);
+      if (item) {
+        return updateCartQuantityHelper(prev, productId, item.quantity + 1);
+      }
+      return prev;
+    });
+  };
+
+  const decreaseQuantity = (productId: string) => {
+    setCart((prev) => {
+      const item = prev.find((i) => i.product.id === productId);
+      if (item) {
+        return updateCartQuantityHelper(prev, productId, item.quantity - 1);
+      }
+      return prev;
+    });
   };
 
   const clearCart = () => setCart([]);
@@ -98,10 +128,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const cartTotal = calculateCartTotal(cart);
   const cartCount = calculateCartCount(cart);
 
+  const getCartTotal = () => calculateCartTotal(cart);
+  const getCartItemCount = () => calculateCartCount(cart);
+
   return (
     <CartContext.Provider
       value={{
         cart,
+        cartItems: cart,
         location,
         searchQuery,
         quickViewProduct,
@@ -112,6 +146,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         addToCart,
         removeFromCart,
         updateCartQuantity,
+        increaseQuantity,
+        decreaseQuantity,
         clearCart,
         changeLocation,
         openQuickView,
@@ -121,6 +157,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setCartOpen,
         cartTotal,
         cartCount,
+        getCartTotal,
+        getCartItemCount,
       }}
     >
       {children}

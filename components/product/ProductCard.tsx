@@ -9,8 +9,8 @@ import {
   IoGitCompareOutline,
 } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa6";
-import { useCart } from "@/components/cart/CartContext";
-import { useWishlist } from "@/components/wishlist/WishlistContext";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 import { Product } from "@/data/products";
 import { Rating } from "@/components/ui/Rating";
 import Image from "next/image";
@@ -60,7 +60,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="relative aspect-square w-full mb-4 flex items-center justify-center bg-transparent rounded-lg overflow-hidden">
         <Image
           src={product.images[0]}
-          height={800}
+          height={600}
           width={800}
           alt={product.title}
           className="object-contain max-h-full max-w-full group-hover:scale-105 transition-transform duration-300 p-2"

@@ -2,8 +2,8 @@
 
 import React from "react";
 import { IoHeartOutline, IoPersonOutline, IoBagOutline } from "react-icons/io5";
-import { useCart } from "@/components/cart/CartContext";
-import { useWishlist } from "@/components/wishlist/WishlistContext";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 export function NavbarActions() {
   const {

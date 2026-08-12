@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaPlus } from "react-icons/fa6";
-import { useCart } from "@/components/cart/CartContext";
+import { useCart } from "@/contexts/CartContext";
 import { Product } from "@/data/products";
 import { Rating } from "@/components/ui/Rating";
 import Image from "next/image";
