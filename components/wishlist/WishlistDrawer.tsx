@@ -6,20 +6,22 @@ import Image from "next/image";
 import { IoTrashOutline } from "react-icons/io5";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
-import { MOCK_PRODUCTS } from "@/data/products";
+import { useData } from "@/contexts/DataContext";
+import { Product } from "@/data/products";
 import { Drawer } from "@/components/ui/Drawer";
 
 export function WishlistDrawer() {
   const { addToCart } = useCart();
   const { wishlist, wishlistOpen, setWishlistOpen, toggleWishlist } =
     useWishlist();
+  const { products } = useData();
 
   // Find actual products in the wishlist
   const wishlistProducts = wishlist
-    .map((id) => MOCK_PRODUCTS.find((p) => p.id === id))
-    .filter((p): p is (typeof MOCK_PRODUCTS)[0] => !!p);
+    .map((id) => products.find((p) => p.id === id))
+    .filter((p): p is Product => !!p);
 
-  const handleAddToCart = (product: (typeof MOCK_PRODUCTS)[0]) => {
+  const handleAddToCart = (product: Product) => {
     addToCart(product, 1);
   };
 

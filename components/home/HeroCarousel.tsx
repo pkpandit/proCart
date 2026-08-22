@@ -4,26 +4,32 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 
-import { SLIDES } from "@/data/hero-slides";
+import { useData } from "@/contexts/DataContext";
 
 export function HeroCarousel() {
+  const { heroSlides } = useData();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleNext = () => {
-    setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
+    if (heroSlides.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   };
 
   const handlePrev = () => {
-    setCurrentSlide((prev) => (prev - 1 + SLIDES.length) % SLIDES.length);
+    if (heroSlides.length === 0) return;
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   };
 
   // Auto-advance slides every 6 seconds
   useEffect(() => {
+    if (heroSlides.length === 0) return;
     const timer = setInterval(handleNext, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroSlides.length]);
 
-  const slide = SLIDES[currentSlide];
+  const slide = heroSlides[currentSlide];
+
+  if (!slide) return null;
 
   return (
     <div className="relative w-full h-80 md:h-112.5 overflow-hidden rounded-2xl border border-border/40 group shadow-xs">
@@ -88,7 +94,7 @@ export function HeroCarousel() {
 
       {/* Dot Indicators */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-        {SLIDES.map((_, idx) => (
+        {heroSlides.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentSlide(idx)}

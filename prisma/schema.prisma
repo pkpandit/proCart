@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model CategoryItem {
+  name      String @id
+  image     String
+  itemCount String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model BannerItem {
+  id       Int   @id @default(autoincrement())
+  title     String
+  discount  String
+  btnText   String
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Product {
+  id              String   @id @default(uuid())
+  title           String
+  category        String
+  // categoryId Int
+  // category    Category @relation(fields: [categoryId], references: [id])
+  price           Float
+  originalPrice   Float?
+  rating          Float
+  reviewsCount    Int
+  images          String[]
+  unit            String
+  badge           Json?
+  inStock         Boolean
+  stockLeft       Int?
+  stockTotal      Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model HeroSlide {
+  id        Int      @id @default(autoincrement())
+  badge     String?
+  title     String
+  subtitle  String
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

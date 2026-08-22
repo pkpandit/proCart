@@ -10,9 +10,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { CATEGORIES } from "@/data/categories";
+import { useData } from "@/contexts/DataContext";
 
 export function CategoryCarousel() {
+  const { categories } = useData();
+
   return (
     <div className="space-y-6 text-left">
       <Carousel
@@ -32,7 +34,7 @@ export function CategoryCarousel() {
         </div>
 
         <CarouselContent className="-ml-4">
-          {CATEGORIES.map((cat, idx) => (
+          {categories.map((cat, idx) => (
             <CarouselItem
               key={cat.name}
               className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6"

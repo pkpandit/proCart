@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-import { BANNERS } from "@/data/banners";
+import { useData } from "@/contexts/DataContext";
 
 export function PromoBanners() {
+  const { banners } = useData();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-      {BANNERS.map((banner, idx) => (
+      {banners.map((banner, idx) => (
         <motion.div
           key={banner.id}
           initial={{ opacity: 0, y: 15 }}

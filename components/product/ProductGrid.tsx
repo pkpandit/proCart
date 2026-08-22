@@ -4,17 +4,18 @@ import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "./ProductCard";
 import { useCart } from "@/contexts/CartContext";
-import { MOCK_PRODUCTS } from "@/data/products";
+import { useData } from "@/contexts/DataContext";
 
 const CATEGORIES = ["All", "Dairy, Bread & Eggs", "Snacks & Munchies", "Fruits & Vegetables", "Instant Food"];
 
 export function ProductGrid() {
   const { searchQuery } = useCart();
+  const { products } = useData();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const filteredProducts = useMemo(() => {
     // Only take the first 10 products that match criteria (to mirror the FreshCart layout)
-    let list = MOCK_PRODUCTS.filter((prod) => !prod.id.startsWith("best-"));
+    let list = products.filter((prod) => !prod.id.startsWith("best-"));
 
     if (selectedCategory !== "All") {
       list = list.filter((p) => p.category === selectedCategory);

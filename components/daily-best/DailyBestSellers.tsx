@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { MOCK_PRODUCTS } from "@/data/products";
+import { useData } from "@/contexts/DataContext";
 import { DailyBestBanner } from "./DailyBestBanner";
 import { DailyBestCard } from "./DailyBestCard";
 
 export function DailyBestSellers() {
-  const bestSellers = MOCK_PRODUCTS.filter((prod) =>
+  const { products } = useData();
+  const bestSellers = products.filter((prod) =>
     prod.id.startsWith("best-")
   );
 

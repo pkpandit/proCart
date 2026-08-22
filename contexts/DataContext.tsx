@@ -1,0 +1,241 @@
+"use client";
+
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { Product, MOCK_PRODUCTS } from "@/data/products";
+import { CategoryItem, CATEGORIES } from "@/data/categories";
+import { BannerItem, BANNERS } from "@/data/banners";
+import { HeroSlide, SLIDES } from "@/data/hero-slides";
+
+interface DataContextType {
+  products: Product[];
+  categories: CategoryItem[];
+  banners: BannerItem[];
+  heroSlides: HeroSlide[];
+  isLoaded: boolean;
+  addProduct: (product: Omit<Product, "id">) => void;
+  updateProduct: (id: string, product: Partial<Product>) => void;
+  deleteProduct: (id: string) => void;
+  addCategory: (category: CategoryItem) => void;
+  updateCategory: (name: string, category: Partial<CategoryItem>) => void;
+  deleteCategory: (name: string) => void;
+  addHeroSlide: (slide: Omit<HeroSlide, "id">) => void;
+  updateHeroSlide: (id: number, slide: Partial<HeroSlide>) => void;
+  deleteHeroSlide: (id: number) => void;
+  addBanner: (banner: Omit<BannerItem, "id">) => void;
+  updateBanner: (id: number, banner: Partial<BannerItem>) => void;
+  deleteBanner: (id: number) => void;
+}
+
+const DataContext = createContext<DataContextType | undefined>(undefined);
+
+export function DataProvider({ children }: { children: React.ReactNode }) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
+  const [banners, setBanners] = useState<BannerItem[]>([]);
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load from localStorage or mock files on mount
+  useEffect(() => {
+    try {
+      const storedProducts = localStorage.getItem("fc_products");
+      const storedCategories = localStorage.getItem("fc_categories");
+      const storedBanners = localStorage.getItem("fc_banners");
+      const storedSlides = localStorage.getItem("fc_slides");
+
+      if (storedProducts) {
+        setProducts(JSON.parse(storedProducts));
+      } else {
+        setProducts(MOCK_PRODUCTS);
+        localStorage.setItem("fc_products", JSON.stringify(MOCK_PRODUCTS));
+      }
+
+      if (storedCategories) {
+        setCategories(JSON.parse(storedCategories));
+      } else {
+        setCategories(CATEGORIES);
+        localStorage.setItem("fc_categories", JSON.stringify(CATEGORIES));
+      }
+
+      if (storedBanners) {
+        setBanners(JSON.parse(storedBanners));
+      } else {
+        setBanners(BANNERS);
+        localStorage.setItem("fc_banners", JSON.stringify(BANNERS));
+      }
+
+      if (storedSlides) {
+        setHeroSlides(JSON.parse(storedSlides));
+      } else {
+        setHeroSlides(SLIDES);
+        localStorage.setItem("fc_slides", JSON.stringify(SLIDES));
+      }
+    } catch (error) {
+      console.error("Error loading data from localStorage:", error);
+      // Fallback
+      setProducts(MOCK_PRODUCTS);
+      setCategories(CATEGORIES);
+      setBanners(BANNERS);
+      setHeroSlides(SLIDES);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  // Helper to update localStorage on change
+  const saveToStorage = (key: string, data: any) => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch (e) {
+        console.error("Failed to save to storage:", e);
+      }
+    }
+  };
+
+  // Products CRUD
+  const addProduct = (newProd: Omit<Product, "id">) => {
+    const productWithId: Product = {
+      ...newProd,
+      id: `prod-${Date.now()}`,
+    };
+    setProducts((prev) => {
+      const updated = [productWithId, ...prev];
+      saveToStorage("fc_products", updated);
+      return updated;
+    });
+  };
+
+  const updateProduct = (id: string, updatedFields: Partial<Product>) => {
+    setProducts((prev) => {
+      const updated = prev.map((p) => (p.id === id ? { ...p, ...updatedFields } : p));
+      saveToStorage("fc_products", updated);
+      return updated;
+    });
+  };
+
+  const deleteProduct = (id: string) => {
+    setProducts((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      saveToStorage("fc_products", updated);
+      return updated;
+    });
+  };
+
+  // Categories CRUD
+  const addCategory = (cat: CategoryItem) => {
+    setCategories((prev) => {
+      // Avoid duplicate names
+      if (prev.some((c) => c.name.toLowerCase() === cat.name.toLowerCase())) {
+        return prev;
+      }
+      const updated = [...prev, cat];
+      saveToStorage("fc_categories", updated);
+      return updated;
+    });
+  };
+
+  const updateCategory = (name: string, updatedFields: Partial<CategoryItem>) => {
+    setCategories((prev) => {
+      const updated = prev.map((c) => (c.name === name ? { ...c, ...updatedFields } : c));
+      saveToStorage("fc_categories", updated);
+      return updated;
+    });
+  };
+
+  const deleteCategory = (name: string) => {
+    setCategories((prev) => {
+      const updated = prev.filter((c) => c.name !== name);
+      saveToStorage("fc_categories", updated);
+      return updated;
+    });
+  };
+
+  // Hero Slides CRUD
+  const addHeroSlide = (slide: Omit<HeroSlide, "id">) => {
+    setHeroSlides((prev) => {
+      const nextId = prev.length > 0 ? Math.max(...prev.map((s) => s.id)) + 1 : 1;
+      const slideWithId: HeroSlide = { ...slide, id: nextId };
+      const updated = [...prev, slideWithId];
+      saveToStorage("fc_slides", updated);
+      return updated;
+    });
+  };
+
+  const updateHeroSlide = (id: number, updatedFields: Partial<HeroSlide>) => {
+    setHeroSlides((prev) => {
+      const updated = prev.map((s) => (s.id === id ? { ...s, ...updatedFields } : s));
+      saveToStorage("fc_slides", updated);
+      return updated;
+    });
+  };
+
+  const deleteHeroSlide = (id: number) => {
+    setHeroSlides((prev) => {
+      const updated = prev.filter((s) => s.id !== id);
+      saveToStorage("fc_slides", updated);
+      return updated;
+    });
+  };
+
+  // Banners CRUD
+  const addBanner = (banner: Omit<BannerItem, "id">) => {
+    setBanners((prev) => {
+      const nextId = prev.length > 0 ? Math.max(...prev.map((b) => b.id)) + 1 : 1;
+      const bannerWithId: BannerItem = { ...banner, id: nextId };
+      const updated = [...prev, bannerWithId];
+      saveToStorage("fc_banners", updated);
+      return updated;
+    });
+  };
+
+  const updateBanner = (id: number, updatedFields: Partial<BannerItem>) => {
+    setBanners((prev) => {
+      const updated = prev.map((b) => (b.id === id ? { ...b, ...updatedFields } : b));
+      saveToStorage("fc_banners", updated);
+      return updated;
+    });
+  };
+
+  const deleteBanner = (id: number) => {
+    setBanners((prev) => {
+      const updated = prev.filter((b) => b.id !== id);
+      saveToStorage("fc_banners", updated);
+      return updated;
+    });
+  };
+
+  return (
+    <DataContext.Provider
+      value={{
+        products,
+        categories,
+        banners,
+        heroSlides,
+        isLoaded,
+        addProduct,
+        updateProduct,
+        deleteProduct,
+        addCategory,
+        updateCategory,
+        deleteCategory,
+        addHeroSlide,
+        updateHeroSlide,
+        deleteHeroSlide,
+        addBanner,
+        updateBanner,
+        deleteBanner,
+      }}
+    >
+      {children}
+    </DataContext.Provider>
+  );
+}
+
+export function useData() {
+  const context = useContext(DataContext);
+  if (!context) {
+    throw new Error("useData must be used within a DataProvider");
+  }
+  return context;
+}
