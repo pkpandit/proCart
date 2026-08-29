@@ -12,11 +12,9 @@ export async function GET(
       id: id,
     },
   });
-
   if (!product) {
     return Response.json({ error: "Product not found" }, { status: 404 });
   }
-
   return Response.json(product);
 }
 
@@ -26,7 +24,6 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-
   const body = await request.json();
 
   // Check if the product exists before attempting to update
@@ -46,7 +43,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-
   // Check if the product exists before attempting to delete
   const product = await prisma.product.findUnique({
     where: {
@@ -58,13 +54,11 @@ export async function DELETE(
   if (!product) {
     return Response.json({ error: "Product not found" }, { status: 404 });
   }
-
   // Delete the product from the database
   const deletedProduct = await prisma.product.delete({
     where: {
       id: id,
     },
   });
-
   return Response.json(deletedProduct);
 }

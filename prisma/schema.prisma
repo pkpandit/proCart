@@ -26,8 +26,6 @@ model Product {
   id              String   @id @default(uuid())
   title           String
   category        String
-  // categoryId Int
-  // category    Category @relation(fields: [categoryId], references: [id])
   price           Float
   originalPrice   Float?
   rating          Float
