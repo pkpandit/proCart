@@ -36,52 +36,73 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from localStorage or mock files on mount
+
   useEffect(() => {
-    try {
-      const storedProducts = localStorage.getItem("fc_products");
-      const storedCategories = localStorage.getItem("fc_categories");
-      const storedBanners = localStorage.getItem("fc_banners");
-      const storedSlides = localStorage.getItem("fc_slides");
+    const loadData = async () => {
+      try {
+        // -----------------------------
+        // Products → API / PostgreSQL
+        // -----------------------------
+        const productsResponse = await fetch("/api/products?page=1&limit=10"); //
 
-      if (storedProducts) {
-        setProducts(JSON.parse(storedProducts));
-      } else {
+        if (!productsResponse.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const productsData = await productsResponse.json();
+        setProducts(productsData.products);
+
+        // -----------------------------
+        // Categories → localStorage
+        // -----------------------------
+        const storedCategories = localStorage.getItem("fc_categories");
+
+        if (storedCategories) {
+          setCategories(JSON.parse(storedCategories));
+        } else {
+          setCategories(CATEGORIES);
+          localStorage.setItem("fc_categories", JSON.stringify(CATEGORIES));
+        }
+
+        // -----------------------------
+        // Banners → localStorage
+        // -----------------------------
+        const storedBanners = localStorage.getItem("fc_banners");
+
+        if (storedBanners) {
+          setBanners(JSON.parse(storedBanners));
+        } else {
+          setBanners(BANNERS);
+          localStorage.setItem("fc_banners", JSON.stringify(BANNERS));
+        }
+
+        // -----------------------------
+        // Hero slides → localStorage
+        // -----------------------------
+        const storedSlides = localStorage.getItem("fc_slides");
+
+        if (storedSlides) {
+          setHeroSlides(JSON.parse(storedSlides));
+        } else {
+          setHeroSlides(SLIDES);
+          localStorage.setItem("fc_slides", JSON.stringify(SLIDES));
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+
+        // Product fallback
         setProducts(MOCK_PRODUCTS);
-        localStorage.setItem("fc_products", JSON.stringify(MOCK_PRODUCTS));
-      }
 
-      if (storedCategories) {
-        setCategories(JSON.parse(storedCategories));
-      } else {
+        // Existing fallbacks
         setCategories(CATEGORIES);
-        localStorage.setItem("fc_categories", JSON.stringify(CATEGORIES));
-      }
-
-      if (storedBanners) {
-        setBanners(JSON.parse(storedBanners));
-      } else {
         setBanners(BANNERS);
-        localStorage.setItem("fc_banners", JSON.stringify(BANNERS));
-      }
-
-      if (storedSlides) {
-        setHeroSlides(JSON.parse(storedSlides));
-      } else {
         setHeroSlides(SLIDES);
-        localStorage.setItem("fc_slides", JSON.stringify(SLIDES));
+      } finally {
+        setIsLoaded(true);
       }
-    } catch (error) {
-      console.error("Error loading data from localStorage:", error);
-      // Fallback
-      setProducts(MOCK_PRODUCTS);
-      setCategories(CATEGORIES);
-      setBanners(BANNERS);
-      setHeroSlides(SLIDES);
-    } finally {
-      setIsLoaded(true);
-    }
-  }, []);
+    };
 
+    loadData();
+  }, []);
   // Helper to update localStorage on change
   const saveToStorage = (key: string, data: any) => {
     if (typeof window !== "undefined") {

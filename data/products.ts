@@ -3,7 +3,7 @@ export interface Product {
   title: string;
   category: string;
   price: number;
-  originalPrice?: number;
+  originalPrice?: number | null;
   rating: number;
   reviewsCount: number;
   images: string[];
@@ -11,7 +11,7 @@ export interface Product {
   badge?: {
     text: string;
     type: "hot" | "sale" | "new" | "discount";
-  };
+  } | null;
   inStock: boolean;
   stockLeft?: number;
   stockTotal?: number;
@@ -25,11 +25,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 5.0,
     rating: 4.5,
     reviewsCount: 148,
-    images: [
-      "/images/products/product-img-1.jpg",
-      "/images/products/product-single-img-1.jpg",
-      "/images/products/product-single-img-2.jpg",
-    ],
+    images: ["/images/products/product-img-1.jpg", "/images/products/product-single-img-1.jpg", "/images/products/product-single-img-2.jpg"],
     unit: ".98 / lb",
     badge: { text: "10% Off", type: "discount" },
     inStock: true,
@@ -42,11 +38,7 @@ export const MOCK_PRODUCTS: Product[] = [
     originalPrice: 26.0,
     rating: 4.5,
     reviewsCount: 89,
-    images: [
-      "/images/products/product-img-2.jpg",
-      "/images/products/product-single-img-2.jpg",
-      "/images/products/product-single-img-3.jpg",
-    ],
+    images: ["/images/products/product-img-2.jpg", "/images/products/product-single-img-2.jpg", "/images/products/product-single-img-3.jpg"],
     unit: "250g",
     inStock: true,
   },
@@ -58,11 +50,7 @@ export const MOCK_PRODUCTS: Product[] = [
     originalPrice: 20.0,
     rating: 5.0,
     reviewsCount: 320,
-    images: [
-      "/images/products/product-img-3.jpg",
-      "/images/products/product-single-img-3.jpg",
-      "/images/products/product-single-img-4.jpg",
-    ],
+    images: ["/images/products/product-img-3.jpg", "/images/products/product-single-img-3.jpg", "/images/products/product-single-img-4.jpg"],
     unit: "1 kg",
     badge: { text: "Hot", type: "hot" },
     inStock: true,
@@ -75,11 +63,7 @@ export const MOCK_PRODUCTS: Product[] = [
     originalPrice: 20.0,
     rating: 4.5,
     reviewsCount: 65,
-    images: [
-      "/images/products/product-img-4.jpg",
-      "/images/products/product-single-img-4.jpg",
-      "/images/products/product-single-img-1.jpg",
-    ],
+    images: ["/images/products/product-img-4.jpg", "/images/products/product-single-img-4.jpg", "/images/products/product-single-img-1.jpg"],
     unit: "250g",
     inStock: true,
   },
@@ -91,11 +75,7 @@ export const MOCK_PRODUCTS: Product[] = [
     originalPrice: 25.0,
     rating: 4.5,
     reviewsCount: 112,
-    images: [
-      "/images/products/product-img-5.jpg",
-      "/images/products/product-single-img-1.jpg",
-      "/images/products/product-single-img-2.jpg",
-    ],
+    images: ["/images/products/product-img-5.jpg", "/images/products/product-single-img-1.jpg", "/images/products/product-single-img-2.jpg"],
     unit: "100g",
     badge: { text: "Sale", type: "sale" },
     inStock: true,
@@ -107,11 +87,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 20.0,
     rating: 4.5,
     reviewsCount: 204,
-    images: [
-      "/images/products/product-img-6.jpg",
-      "/images/products/product-single-img-2.jpg",
-      "/images/products/product-single-img-3.jpg",
-    ],
+    images: ["/images/products/product-img-6.jpg", "/images/products/product-single-img-2.jpg", "/images/products/product-single-img-3.jpg"],
     unit: "200g",
     inStock: true,
   },
@@ -122,11 +98,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 24.0,
     rating: 4.5,
     reviewsCount: 92,
-    images: [
-      "/images/products/product-img-7.jpg",
-      "/images/products/product-single-img-3.jpg",
-      "/images/products/product-single-img-4.jpg",
-    ],
+    images: ["/images/products/product-img-7.jpg", "/images/products/product-single-img-3.jpg", "/images/products/product-single-img-4.jpg"],
     unit: "200g",
     inStock: true,
   },
@@ -137,11 +109,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 32.0,
     rating: 4.0,
     reviewsCount: 410,
-    images: [
-      "/images/products/product-img-8.jpg",
-      "/images/products/product-single-img-4.jpg",
-      "/images/products/product-single-img-1.jpg",
-    ],
+    images: ["/images/products/product-img-8.jpg", "/images/products/product-single-img-4.jpg", "/images/products/product-single-img-1.jpg"],
     unit: "450g",
     inStock: true,
   },
@@ -153,11 +121,7 @@ export const MOCK_PRODUCTS: Product[] = [
     originalPrice: 5.0,
     rating: 4.5,
     reviewsCount: 47,
-    images: [
-      "/images/products/product-img-9.jpg",
-      "/images/products/product-single-img-1.jpg",
-      "/images/products/product-single-img-2.jpg",
-    ],
+    images: ["/images/products/product-img-9.jpg", "/images/products/product-single-img-1.jpg", "/images/products/product-single-img-2.jpg"],
     unit: "250g",
     badge: { text: "New", type: "new" },
     inStock: true,
@@ -169,11 +133,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 18.0,
     rating: 4.5,
     reviewsCount: 512,
-    images: [
-      "/images/products/product-img-10.jpg",
-      "/images/products/product-single-img-2.jpg",
-      "/images/products/product-single-img-3.jpg",
-    ],
+    images: ["/images/products/product-img-10.jpg", "/images/products/product-single-img-2.jpg", "/images/products/product-single-img-3.jpg"],
     unit: "500g",
     inStock: true,
   },
@@ -186,11 +146,7 @@ export const MOCK_PRODUCTS: Product[] = [
     originalPrice: 18.0,
     rating: 4.3,
     reviewsCount: 195,
-    images: [
-      "/images/products/product-img-12.jpg",
-      "/images/products/product-single-img-4.jpg",
-      "/images/products/product-single-img-1.jpg",
-    ],
+    images: ["/images/products/product-img-12.jpg", "/images/products/product-single-img-4.jpg", "/images/products/product-single-img-1.jpg"],
     unit: "250g",
     badge: { text: "20% Off", type: "sale" },
     inStock: true,
@@ -205,11 +161,7 @@ export const MOCK_PRODUCTS: Product[] = [
     originalPrice: 18.0,
     rating: 4.3,
     reviewsCount: 88,
-    images: [
-      "/images/products/product-img-13.jpg",
-      "/images/products/product-single-img-1.jpg",
-      "/images/products/product-single-img-2.jpg",
-    ],
+    images: ["/images/products/product-img-13.jpg", "/images/products/product-single-img-1.jpg", "/images/products/product-single-img-2.jpg"],
     unit: "400g",
     badge: { text: "Hot", type: "hot" },
     inStock: true,
@@ -224,11 +176,7 @@ export const MOCK_PRODUCTS: Product[] = [
     originalPrice: 18.0,
     rating: 4.3,
     reviewsCount: 220,
-    images: [
-      "/images/products/product-img-14.jpg",
-      "/images/products/product-single-img-2.jpg",
-      "/images/products/product-single-img-3.jpg",
-    ],
+    images: ["/images/products/product-img-14.jpg", "/images/products/product-single-img-2.jpg", "/images/products/product-single-img-3.jpg"],
     unit: "1 Unit",
     badge: { text: "Sale", type: "sale" },
     inStock: true,

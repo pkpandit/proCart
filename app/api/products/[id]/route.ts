@@ -1,7 +1,44 @@
 import { prisma } from "@/lib/prisma";
 
 // GET /api/products/:id - Get a product by ID
-export async function GET(
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!product) {
+      return Response.json(
+        {
+          error: "Product not found",
+        },
+        {
+          status: 404,
+        },
+      );
+    }
+
+    return Response.json(product, {
+      status: 200,
+    });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+
+    return Response.json(
+      {
+        error: "Failed to fetch product",
+      },
+      {
+        status: 500,
+      },
+    );
+  }
+}
+/* export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
@@ -16,13 +53,10 @@ export async function GET(
     return Response.json({ error: "Product not found" }, { status: 404 });
   }
   return Response.json(product);
-}
+} */
 
 // PATCH /api/products/:id - Update a product by ID
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await request.json();
 
@@ -38,10 +72,7 @@ export async function PATCH(
 }
 
 // DELETE /api/products/:id - Delete a product by ID
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   // Check if the product exists before attempting to delete
   const product = await prisma.product.findUnique({
