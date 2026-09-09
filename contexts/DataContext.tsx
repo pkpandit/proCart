@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { Product, MOCK_PRODUCTS } from "@/data/products";
 import { CategoryItem, CATEGORIES } from "@/data/categories";
 import { BannerItem, BANNERS } from "@/data/banners";
@@ -8,6 +8,9 @@ import { HeroSlide, SLIDES } from "@/data/hero-slides";
 
 interface DataContextType {
   products: Product[];
+  currentPage: number;
+  totalPages: number;
+  loadProducts: (page: number, category?: string, search?: string) => Promise<void>;
   categories: CategoryItem[];
   banners: BannerItem[];
   heroSlides: HeroSlide[];
@@ -30,27 +33,50 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [banners, setBanners] = useState<BannerItem[]>([]);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage or mock files on mount
+  // Load application data on mount
+  const loadProducts = useCallback(async (page: number, category?: string, search?: string) => {
+    try {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: "10",
+      });
 
+      if (category && category !== "All") {
+        params.set("category", category);
+      }
+
+      if (search?.trim()) {
+        params.set("search", search.trim());
+      }
+
+      const response = await fetch(`/api/products?${params.toString()}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch products");
+      }
+
+      const data = await response.json();
+
+      setProducts(data.products);
+      setCurrentPage(data.pagination.page);
+      setTotalPages(data.pagination.totalPages);
+    } catch (error) {
+      console.error("Error loading products:", error);
+      setProducts(MOCK_PRODUCTS);
+      setCurrentPage(1);
+      setTotalPages(1);
+    }
+  }, []);
   useEffect(() => {
     const loadData = async () => {
       try {
-        // -----------------------------
-        // Products → API / PostgreSQL
-        // -----------------------------
-        const productsResponse = await fetch("/api/products?page=1&limit=10"); //
-
-        if (!productsResponse.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const productsData = await productsResponse.json();
-        setProducts(productsData.products);
-
         // -----------------------------
         // Categories → localStorage
         // -----------------------------
@@ -234,6 +260,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         banners,
         heroSlides,
         isLoaded,
+        currentPage,
+        totalPages,
+        loadProducts,
         addProduct,
         updateProduct,
         deleteProduct,

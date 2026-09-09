@@ -23,7 +23,6 @@ export const DESKTOP_NAV_LINKS: NavigationLink[] = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
   { label: "Stores", href: "/stores" },
-  { label: "Dashboard", href: "/admin" },
 ];
 
 export const MOBILE_NAV_LINKS: NavigationLink[] = [
@@ -32,5 +31,4 @@ export const MOBILE_NAV_LINKS: NavigationLink[] = [
   { label: "Stores", href: "/stores" },
   { label: "Pages", href: "/pages" },
   { label: "Account", href: "#", isAction: true },
-  { label: "Dashboard", href: "/admin" },
 ];

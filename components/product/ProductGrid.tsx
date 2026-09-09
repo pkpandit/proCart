@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "./ProductCard";
 import { useCart } from "@/contexts/CartContext";
@@ -10,22 +10,16 @@ const CATEGORIES = ["All", "Dairy, Bread & Eggs", "Snacks & Munchies", "Fruits &
 
 export function ProductGrid() {
   const { searchQuery } = useCart();
-  const { products } = useData();
+  const { products, currentPage, totalPages, loadProducts } = useData();
   const [selectedCategory, setSelectedCategory] = useState("All");
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadProducts(1, selectedCategory, searchQuery);
+    }, 300);
 
-  const filteredProducts = useMemo(() => {
-    let list = products.filter((prod) => !prod.id.startsWith("best-"));
-
-    if (selectedCategory !== "All") {
-      list = list.filter((p) => p.category === selectedCategory);
-    }
-
-    if (searchQuery.trim() !== "") {
-      list = list.filter((p) => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase()));
-    }
-
-    return list.slice(0, 10);
-  }, [products, selectedCategory, searchQuery]);
+    return () => clearTimeout(timer);
+  }, [selectedCategory, searchQuery, loadProducts]);
+  const filteredProducts = products.filter((prod) => !prod.id.startsWith("best-"));
   return (
     <div className="space-y-6 text-left">
       {/* Header and Filter Tab Row */}
@@ -58,6 +52,21 @@ export function ProductGrid() {
             ))}
           </AnimatePresence>
         </motion.div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 pt-4">
+          <button onClick={() => loadProducts(currentPage - 1, selectedCategory, searchQuery)} disabled={currentPage === 1} className="px-4 py-2 rounded-lg text-sm font-semibold border border-border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted">
+            Previous
+          </button>
+
+          <span className="text-sm font-semibold">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button onClick={() => loadProducts(currentPage + 1, selectedCategory, searchQuery)} disabled={currentPage === totalPages} className="px-4 py-2 rounded-lg text-sm font-semibold border border-border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted">
+            Next
+          </button>
+        </div>
       )}
     </div>
   );
