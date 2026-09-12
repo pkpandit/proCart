@@ -9,6 +9,7 @@ async function main() {
   //console.log("Old products deleted.");
   const result = await prisma.product.createMany({
     data: products,
+    skipDuplicates: true,
   });
   console.log(`Inserted ${result.count} products.`);
 }

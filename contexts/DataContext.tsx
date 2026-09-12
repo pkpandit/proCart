@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { Product, MOCK_PRODUCTS } from "@/data/products";
 import { CategoryItem, CATEGORIES } from "@/data/categories";
 import { BannerItem, BANNERS } from "@/data/banners";
@@ -10,14 +16,18 @@ interface DataContextType {
   products: Product[];
   currentPage: number;
   totalPages: number;
-  loadProducts: (page: number, category?: string, search?: string) => Promise<void>;
+  loadProducts: (
+    page: number,
+    category?: string,
+    search?: string,
+  ) => Promise<void>;
   categories: CategoryItem[];
   banners: BannerItem[];
   heroSlides: HeroSlide[];
   isLoaded: boolean;
-  addProduct: (product: Omit<Product, "id">) => void;
-  updateProduct: (id: string, product: Partial<Product>) => void;
-  deleteProduct: (id: string) => void;
+  addProduct: (product: Omit<Product, "id">) => Promise<void>;
+  updateProduct: (id: string, product: Partial<Product>) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
   addCategory: (category: CategoryItem) => void;
   updateCategory: (name: string, category: Partial<CategoryItem>) => void;
   deleteCategory: (name: string) => void;
@@ -41,42 +51,46 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load application data on mount
-  const loadProducts = useCallback(async (page: number, category?: string, search?: string) => {
-    try {
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: "10",
-      });
+  const loadProducts = useCallback(
+    async (page: number, category?: string, search?: string) => {
+      try {
+        const params = new URLSearchParams({
+          page: String(page),
+          limit: "10",
+        });
 
-      if (category && category !== "All") {
-        params.set("category", category);
+        if (category && category !== "All") {
+          params.set("category", category);
+        }
+
+        if (search?.trim()) {
+          params.set("search", search.trim());
+        }
+
+        const response = await fetch(`/api/products?${params.toString()}`);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
+        const data = await response.json();
+
+        setProducts(data.products);
+        setCurrentPage(data.pagination.page);
+        setTotalPages(data.pagination.totalPages);
+      } catch (error) {
+        console.error("Error loading products:", error);
+        setProducts(MOCK_PRODUCTS);
+        setCurrentPage(1);
+        setTotalPages(1);
       }
-
-      if (search?.trim()) {
-        params.set("search", search.trim());
-      }
-
-      const response = await fetch(`/api/products?${params.toString()}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch products");
-      }
-
-      const data = await response.json();
-
-      setProducts(data.products);
-      setCurrentPage(data.pagination.page);
-      setTotalPages(data.pagination.totalPages);
-    } catch (error) {
-      console.error("Error loading products:", error);
-      setProducts(MOCK_PRODUCTS);
-      setCurrentPage(1);
-      setTotalPages(1);
-    }
-  }, []);
+    },
+    [],
+  );
   useEffect(() => {
     const loadData = async () => {
       try {
+        await loadProducts(1);
         // -----------------------------
         // Categories → localStorage
         // -----------------------------
@@ -128,7 +142,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadData();
-  }, []);
+  }, [loadProducts]);
   // Helper to update localStorage on change
   const saveToStorage = (key: string, data: any) => {
     if (typeof window !== "undefined") {
@@ -141,32 +155,69 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Products CRUD
-  const addProduct = (newProd: Omit<Product, "id">) => {
-    const productWithId: Product = {
-      ...newProd,
-      id: `prod-${Date.now()}`,
-    };
-    setProducts((prev) => {
-      const updated = [productWithId, ...prev];
-      saveToStorage("fc_products", updated);
-      return updated;
-    });
+  const addProduct = async (newProd: Omit<Product, "id">) => {
+    try {
+      const response = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newProd),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create product");
+      }
+
+      const createdProduct: Product = await response.json();
+
+      setProducts((prev) => [createdProduct, ...prev]);
+    } catch (error) {
+      console.error("Error adding product:", error);
+      throw error;
+    }
   };
 
-  const updateProduct = (id: string, updatedFields: Partial<Product>) => {
-    setProducts((prev) => {
-      const updated = prev.map((p) => (p.id === id ? { ...p, ...updatedFields } : p));
-      saveToStorage("fc_products", updated);
-      return updated;
-    });
+  const updateProduct = async (id: string, updatedFields: Partial<Product>) => {
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFields),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update product");
+      }
+
+      const updatedProduct: Product = await response.json();
+
+      setProducts((prev) =>
+        prev.map((product) => (product.id === id ? updatedProduct : product)),
+      );
+    } catch (error) {
+      console.error("Error updating product:", error);
+      throw error;
+    }
   };
 
-  const deleteProduct = (id: string) => {
-    setProducts((prev) => {
-      const updated = prev.filter((p) => p.id !== id);
-      saveToStorage("fc_products", updated);
-      return updated;
-    });
+  const deleteProduct = async (id: string) => {
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete product");
+      }
+
+      setProducts((prev) => prev.filter((product) => product.id !== id));
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      throw error;
+    }
   };
 
   // Categories CRUD
@@ -182,9 +233,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const updateCategory = (name: string, updatedFields: Partial<CategoryItem>) => {
+  const updateCategory = (
+    name: string,
+    updatedFields: Partial<CategoryItem>,
+  ) => {
     setCategories((prev) => {
-      const updated = prev.map((c) => (c.name === name ? { ...c, ...updatedFields } : c));
+      const updated = prev.map((c) =>
+        c.name === name ? { ...c, ...updatedFields } : c,
+      );
       saveToStorage("fc_categories", updated);
       return updated;
     });
@@ -201,7 +257,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   // Hero Slides CRUD
   const addHeroSlide = (slide: Omit<HeroSlide, "id">) => {
     setHeroSlides((prev) => {
-      const nextId = prev.length > 0 ? Math.max(...prev.map((s) => s.id)) + 1 : 1;
+      const nextId =
+        prev.length > 0 ? Math.max(...prev.map((s) => s.id)) + 1 : 1;
       const slideWithId: HeroSlide = { ...slide, id: nextId };
       const updated = [...prev, slideWithId];
       saveToStorage("fc_slides", updated);
@@ -211,7 +268,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const updateHeroSlide = (id: number, updatedFields: Partial<HeroSlide>) => {
     setHeroSlides((prev) => {
-      const updated = prev.map((s) => (s.id === id ? { ...s, ...updatedFields } : s));
+      const updated = prev.map((s) =>
+        s.id === id ? { ...s, ...updatedFields } : s,
+      );
       saveToStorage("fc_slides", updated);
       return updated;
     });
@@ -228,7 +287,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   // Banners CRUD
   const addBanner = (banner: Omit<BannerItem, "id">) => {
     setBanners((prev) => {
-      const nextId = prev.length > 0 ? Math.max(...prev.map((b) => b.id)) + 1 : 1;
+      const nextId =
+        prev.length > 0 ? Math.max(...prev.map((b) => b.id)) + 1 : 1;
       const bannerWithId: BannerItem = { ...banner, id: nextId };
       const updated = [...prev, bannerWithId];
       saveToStorage("fc_banners", updated);
@@ -238,7 +298,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const updateBanner = (id: number, updatedFields: Partial<BannerItem>) => {
     setBanners((prev) => {
-      const updated = prev.map((b) => (b.id === id ? { ...b, ...updatedFields } : b));
+      const updated = prev.map((b) =>
+        b.id === id ? { ...b, ...updatedFields } : b,
+      );
       saveToStorage("fc_banners", updated);
       return updated;
     });
