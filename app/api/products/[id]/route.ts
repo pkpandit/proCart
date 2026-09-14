@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma";
 
 // GET /api/products/:id - Get a product by ID
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
     const { id } = await params;
 
@@ -38,25 +41,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     );
   }
 }
-/* export async function GET(
+
+// PATCH /api/products/:id - Update a product by ID
+export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = await params;
-  //  const product = MOCK_PRODUCTS.find((product) => product.id === id);
-  const product = await prisma.product.findUnique({
-    where: {
-      id: id,
-    },
-  });
-  if (!product) {
-    return Response.json({ error: "Product not found" }, { status: 404 });
-  }
-  return Response.json(product);
-} */
-
-// PATCH /api/products/:id - Update a product by ID
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await request.json();
 
@@ -72,7 +62,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 }
 
 // DELETE /api/products/:id - Delete a product by ID
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { id } = await params;
   // Check if the product exists before attempting to delete
   const product = await prisma.product.findUnique({

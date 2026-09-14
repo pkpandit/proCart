@@ -80,7 +80,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         setTotalPages(data.pagination.totalPages);
       } catch (error) {
         console.error("Error loading products:", error);
-        setProducts(MOCK_PRODUCTS);
+        setProducts([]);
         setCurrentPage(1);
         setTotalPages(1);
       }

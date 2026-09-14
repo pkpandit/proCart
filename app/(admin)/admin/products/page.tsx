@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Package, Plus, CheckCircle2, AlertTriangle, XCircle, ShoppingBag } from "lucide-react";
+import {
+  Package,
+  Plus,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  ShoppingBag,
+} from "lucide-react";
 import { useData } from "@/contexts/DataContext";
 import { ProductTable } from "@/components/admin/ProductTable";
 import { ProductModal } from "@/components/admin/ProductModal";
@@ -10,7 +17,15 @@ import { useAdminToast } from "@/components/admin/AdminToast";
 import { Product } from "@/components/admin/types";
 
 export default function AdminProductsPage() {
-  const { products, addProduct, updateProduct, deleteProduct } = useData();
+  const {
+    products,
+    currentPage,
+    totalPages,
+    loadProducts,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+  } = useData();
   const { showToast } = useAdminToast();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,7 +87,7 @@ export default function AdminProductsPage() {
   const inStockCount = products.filter((p) => p.inStock).length;
   const outOfStockCount = products.filter((p) => !p.inStock).length;
   const lowStockCount = products.filter(
-    (p) => p.inStock && p.stockLeft !== undefined && p.stockLeft < 20
+    (p) => p.inStock && p.stockLeft !== undefined && p.stockLeft < 20,
   ).length;
 
   return (
@@ -84,7 +99,8 @@ export default function AdminProductsPage() {
             Product Catalog Management
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Manage your grocery items, prices, stock statuses, and marketing badges.
+            Manage your grocery items, prices, stock statuses, and marketing
+            badges.
           </p>
         </div>
         <button
@@ -104,8 +120,12 @@ export default function AdminProductsPage() {
             <Package className="size-5" />
           </div>
           <div>
-            <span className="text-[11px] text-muted-foreground block">Total Catalog</span>
-            <span className="text-lg font-bold text-foreground">{products.length} Items</span>
+            <span className="text-[11px] text-muted-foreground block">
+              Total Catalog
+            </span>
+            <span className="text-lg font-bold text-foreground">
+              {products.length} Items
+            </span>
           </div>
         </div>
 
@@ -114,8 +134,12 @@ export default function AdminProductsPage() {
             <CheckCircle2 className="size-5" />
           </div>
           <div>
-            <span className="text-[11px] text-muted-foreground block">In Stock</span>
-            <span className="text-lg font-bold text-foreground">{inStockCount} Items</span>
+            <span className="text-[11px] text-muted-foreground block">
+              In Stock
+            </span>
+            <span className="text-lg font-bold text-foreground">
+              {inStockCount} Items
+            </span>
           </div>
         </div>
 
@@ -124,8 +148,12 @@ export default function AdminProductsPage() {
             <AlertTriangle className="size-5" />
           </div>
           <div>
-            <span className="text-[11px] text-muted-foreground block">Low Stock (&lt;20)</span>
-            <span className="text-lg font-bold text-foreground">{lowStockCount} Items</span>
+            <span className="text-[11px] text-muted-foreground block">
+              Low Stock (&lt;20)
+            </span>
+            <span className="text-lg font-bold text-foreground">
+              {lowStockCount} Items
+            </span>
           </div>
         </div>
 
@@ -134,8 +162,12 @@ export default function AdminProductsPage() {
             <XCircle className="size-5" />
           </div>
           <div>
-            <span className="text-[11px] text-muted-foreground block">Out of Stock</span>
-            <span className="text-lg font-bold text-foreground">{outOfStockCount} Items</span>
+            <span className="text-[11px] text-muted-foreground block">
+              Out of Stock
+            </span>
+            <span className="text-lg font-bold text-foreground">
+              {outOfStockCount} Items
+            </span>
           </div>
         </div>
       </div>
@@ -143,6 +175,10 @@ export default function AdminProductsPage() {
       {/* Main Interactive Products Table */}
       <ProductTable
         products={products}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => loadProducts(page)}
+        onFilterChange={(category, search) => loadProducts(1, category, search)}
         onAddProduct={handleOpenAddModal}
         onEditProduct={handleOpenEditModal}
         onDeleteProduct={handleOpenDeleteDialog}

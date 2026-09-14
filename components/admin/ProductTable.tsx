@@ -19,8 +19,13 @@ import {
 import { Product } from "./types";
 import { CATEGORIES } from "@/data/categories";
 
+const PAGE_SIZE = 10;
 interface ProductTableProps {
   products: Product[];
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  onFilterChange: (category?: string, search?: string) => void;
   onAddProduct: () => void;
   onEditProduct: (product: Product) => void;
   onDeleteProduct: (product: Product) => void;
@@ -28,6 +33,10 @@ interface ProductTableProps {
 
 export function ProductTable({
   products,
+  currentPage,
+  totalPages,
+  onPageChange,
+  onFilterChange,
   onAddProduct,
   onEditProduct,
   onDeleteProduct,
@@ -38,51 +47,46 @@ export function ProductTable({
   const [sortBy, setSortBy] = useState<
     "title" | "price-asc" | "price-desc" | "rating"
   >("title");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
 
-  // Filtering and Sorting
-  const filteredProducts = useMemo(() => {
-    return products
-      .filter((product) => {
-        const matchesSearch =
-          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.category.toLowerCase().includes(searchTerm.toLowerCase());
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    onFilterChange(
+      selectedCategory === "All" ? undefined : selectedCategory,
+      value,
+    );
+  };
 
-        const matchesCategory =
-          selectedCategory === "All" || product.category === selectedCategory;
-
-        const matchesStock =
-          selectedStockStatus === "All" ||
-          (selectedStockStatus === "in-stock" && product.inStock) ||
-          (selectedStockStatus === "out-of-stock" && !product.inStock) ||
-          (selectedStockStatus === "low-stock" &&
-            product.inStock &&
-            product.stockLeft !== undefined &&
-            product.stockLeft < 20);
-
-        return matchesSearch && matchesCategory && matchesStock;
-      })
-      .sort((a, b) => {
-        if (sortBy === "price-asc") return a.price - b.price;
-        if (sortBy === "price-desc") return b.price - a.price;
-        if (sortBy === "rating") return b.rating - a.rating;
-        return a.title.localeCompare(b.title);
-      });
-  }, [products, searchTerm, selectedCategory, selectedStockStatus, sortBy]);
-
-  // Pagination calculation
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage) || 1;
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return filteredProducts.slice(start, start + itemsPerPage);
-  }, [filteredProducts, currentPage]);
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+    onFilterChange(value === "All" ? undefined : value, searchTerm);
+  };
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      onPageChange(page);
     }
   };
+
+  const resetFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("All");
+    setSelectedStockStatus("All");
+    onFilterChange(undefined, undefined);
+  };
+
+  const sortedProducts = useMemo(() => {
+    return [...products].sort((a, b) => {
+      if (sortBy === "price-asc") return a.price - b.price;
+      if (sortBy === "price-desc") return b.price - a.price;
+      if (sortBy === "rating") return b.rating - a.rating;
+      return a.title.localeCompare(b.title);
+    });
+  }, [products, sortBy]);
+
+  const startItem =
+    products.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+
+  const endItem = products.length === 0 ? 0 : startItem + products.length - 1;
 
   return (
     <div className="space-y-4">
@@ -94,10 +98,7 @@ export function ProductTable({
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search by title or category..."
             className="w-full rounded-xl border border-border bg-background py-2 pl-9 pr-4 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
@@ -108,10 +109,7 @@ export function ProductTable({
           {/* Category Filter */}
           <select
             value={selectedCategory}
-            onChange={(e) => {
-              setSelectedCategory(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => handleCategoryChange(e.target.value)}
             className="rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
           >
             <option value="All">All Categories</option>
@@ -127,7 +125,6 @@ export function ProductTable({
             value={selectedStockStatus}
             onChange={(e) => {
               setSelectedStockStatus(e.target.value);
-              setCurrentPage(1);
             }}
             className="rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
           >
@@ -175,14 +172,14 @@ export function ProductTable({
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-border/60 text-xs">
-              {paginatedProducts.length > 0 ? (
-                paginatedProducts.map((product) => {
+              {sortedProducts.length > 0 ? (
+                sortedProducts.map((product) => {
                   const isLowStock =
                     product.inStock &&
                     product.stockLeft !== undefined &&
                     product.stockLeft < 20;
-
                   return (
                     <tr
                       key={product.id}
@@ -345,11 +342,7 @@ export function ProductTable({
                       </p>
                       <button
                         type="button"
-                        onClick={() => {
-                          setSearchTerm("");
-                          setSelectedCategory("All");
-                          setSelectedStockStatus("All");
-                        }}
+                        onClick={resetFilters}
                         className="mt-2 text-xs font-semibold text-primary hover:underline"
                       >
                         Reset All Filters
@@ -366,19 +359,8 @@ export function ProductTable({
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-border bg-muted/10 text-xs text-muted-foreground">
           <div>
             Showing{" "}
-            <span className="font-semibold text-foreground">
-              {filteredProducts.length === 0
-                ? 0
-                : (currentPage - 1) * itemsPerPage + 1}
-            </span>{" "}
-            to{" "}
-            <span className="font-semibold text-foreground">
-              {Math.min(currentPage * itemsPerPage, filteredProducts.length)}
-            </span>{" "}
-            of{" "}
-            <span className="font-semibold text-foreground">
-              {filteredProducts.length}
-            </span>{" "}
+            <span className="font-semibold text-foreground">{startItem}</span>{" "}
+            to <span className="font-semibold text-foreground">{endItem}</span>{" "}
             products
           </div>
 
