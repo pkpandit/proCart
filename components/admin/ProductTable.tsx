@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Search,
-  Filter,
   Plus,
   Edit2,
   Trash2,
@@ -25,7 +24,12 @@ interface ProductTableProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  onFilterChange: (category?: string, search?: string) => void;
+  onFilterChange: (
+    category?: string,
+    search?: string,
+    stockStatus?: string,
+    sortBy?: string,
+  ) => void;
   onAddProduct: () => void;
   onEditProduct: (product: Product) => void;
   onDeleteProduct: (product: Product) => void;
@@ -47,18 +51,24 @@ export function ProductTable({
   const [sortBy, setSortBy] = useState<
     "title" | "price-asc" | "price-desc" | "rating"
   >("title");
-
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
+
     onFilterChange(
       selectedCategory === "All" ? undefined : selectedCategory,
       value,
+      selectedStockStatus === "All" ? undefined : selectedStockStatus,
     );
   };
 
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
-    onFilterChange(value === "All" ? undefined : value, searchTerm);
+
+    onFilterChange(
+      value === "All" ? undefined : value,
+      searchTerm,
+      selectedStockStatus === "All" ? undefined : selectedStockStatus,
+    );
   };
 
   const handlePageChange = (page: number) => {
@@ -71,17 +81,19 @@ export function ProductTable({
     setSearchTerm("");
     setSelectedCategory("All");
     setSelectedStockStatus("All");
-    onFilterChange(undefined, undefined);
+    setSortBy("title");
+
+    onFilterChange(undefined, undefined, undefined, "title");
   };
 
-  const sortedProducts = useMemo(() => {
+  /* const sortedProducts = useMemo(() => {
     return [...products].sort((a, b) => {
       if (sortBy === "price-asc") return a.price - b.price;
       if (sortBy === "price-desc") return b.price - a.price;
       if (sortBy === "rating") return b.rating - a.rating;
       return a.title.localeCompare(b.title);
     });
-  }, [products, sortBy]);
+  }, [products, sortBy]); */
 
   const startItem =
     products.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
@@ -124,20 +136,39 @@ export function ProductTable({
           <select
             value={selectedStockStatus}
             onChange={(e) => {
-              setSelectedStockStatus(e.target.value);
+              const value = e.target.value;
+              setSelectedStockStatus(value);
+
+              onFilterChange(
+                selectedCategory === "All" ? undefined : selectedCategory,
+                searchTerm,
+                value === "All" ? undefined : value,
+              );
             }}
             className="rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
           >
             <option value="All">All Stock</option>
-            <option value="in-stock">In Stock</option>
-            <option value="low-stock">Low Stock (&lt; 20)</option>
-            <option value="out-of-stock">Out of Stock</option>
+            <option value="In Stock">In Stock</option>
+            <option value="Low Stock">Low Stock (&lt; 20)</option>
+            <option value="Out of Stock">Out of Stock</option>
           </select>
 
           {/* Sort By */}
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => {
+              const value = e.target.value as
+                "title" | "price-asc" | "price-desc" | "rating";
+
+              setSortBy(value);
+
+              onFilterChange(
+                selectedCategory === "All" ? undefined : selectedCategory,
+                searchTerm,
+                selectedStockStatus === "All" ? undefined : selectedStockStatus,
+                value,
+              );
+            }}
             className="rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
           >
             <option value="title">Sort: Name (A-Z)</option>
@@ -174,8 +205,8 @@ export function ProductTable({
             </thead>
 
             <tbody className="divide-y divide-border/60 text-xs">
-              {sortedProducts.length > 0 ? (
-                sortedProducts.map((product) => {
+              {products.length > 0 ? (
+                products.map((product) => {
                   const isLowStock =
                     product.inStock &&
                     product.stockLeft !== undefined &&

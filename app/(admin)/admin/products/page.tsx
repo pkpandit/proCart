@@ -21,6 +21,7 @@ export default function AdminProductsPage() {
     products,
     currentPage,
     totalPages,
+    productStats,
     loadProducts,
     addProduct,
     updateProduct,
@@ -83,13 +84,6 @@ export default function AdminProductsPage() {
     setProductToDelete(null);
   };
 
-  // Metrics
-  const inStockCount = products.filter((p) => p.inStock).length;
-  const outOfStockCount = products.filter((p) => !p.inStock).length;
-  const lowStockCount = products.filter(
-    (p) => p.inStock && p.stockLeft !== undefined && p.stockLeft < 20,
-  ).length;
-
   return (
     <div className="space-y-6">
       {/* Header & Metric Bar */}
@@ -124,7 +118,7 @@ export default function AdminProductsPage() {
               Total Catalog
             </span>
             <span className="text-lg font-bold text-foreground">
-              {products.length} Items
+              {productStats.total} Items
             </span>
           </div>
         </div>
@@ -138,7 +132,7 @@ export default function AdminProductsPage() {
               In Stock
             </span>
             <span className="text-lg font-bold text-foreground">
-              {inStockCount} Items
+              {productStats.inStock} Items
             </span>
           </div>
         </div>
@@ -152,7 +146,7 @@ export default function AdminProductsPage() {
               Low Stock (&lt;20)
             </span>
             <span className="text-lg font-bold text-foreground">
-              {lowStockCount} Items
+              {productStats.lowStock} Items
             </span>
           </div>
         </div>
@@ -166,7 +160,7 @@ export default function AdminProductsPage() {
               Out of Stock
             </span>
             <span className="text-lg font-bold text-foreground">
-              {outOfStockCount} Items
+              {productStats.outOfStock} Items
             </span>
           </div>
         </div>
@@ -178,7 +172,9 @@ export default function AdminProductsPage() {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={(page) => loadProducts(page)}
-        onFilterChange={(category, search) => loadProducts(1, category, search)}
+        onFilterChange={(category, search, stockStatus, sortBy) =>
+          loadProducts(1, category, search, stockStatus, sortBy)
+        }
         onAddProduct={handleOpenAddModal}
         onEditProduct={handleOpenEditModal}
         onDeleteProduct={handleOpenDeleteDialog}

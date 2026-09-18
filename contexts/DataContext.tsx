@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { Product, MOCK_PRODUCTS } from "@/data/products";
+import { Product } from "@/data/products";
 import { CategoryItem, CATEGORIES } from "@/data/categories";
 import { BannerItem, BANNERS } from "@/data/banners";
 import { HeroSlide, SLIDES } from "@/data/hero-slides";
@@ -16,10 +16,18 @@ interface DataContextType {
   products: Product[];
   currentPage: number;
   totalPages: number;
+  productStats: {
+    total: number;
+    inStock: number;
+    lowStock: number;
+    outOfStock: number;
+  };
   loadProducts: (
     page: number,
     category?: string,
     search?: string,
+    stockStatus?: string,
+    sortBy?: string,
   ) => Promise<void>;
   categories: CategoryItem[];
   banners: BannerItem[];
@@ -45,6 +53,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [productStats, setProductStats] = useState({
+    total: 0,
+    inStock: 0,
+    lowStock: 0,
+    outOfStock: 0,
+  });
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [banners, setBanners] = useState<BannerItem[]>([]);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
@@ -52,7 +66,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   // Load application data on mount
   const loadProducts = useCallback(
-    async (page: number, category?: string, search?: string) => {
+    async (
+      page: number,
+      category?: string,
+      search?: string,
+      stockStatus?: string,
+      sortBy?: string,
+    ) => {
       try {
         const params = new URLSearchParams({
           page: String(page),
@@ -66,7 +86,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         if (search?.trim()) {
           params.set("search", search.trim());
         }
-
+        if (stockStatus && stockStatus !== "All") {
+          params.set("stockStatus", stockStatus);
+        }
+        if (sortBy) {
+          params.set("sortBy", sortBy);
+        }
         const response = await fetch(`/api/products?${params.toString()}`);
 
         if (!response.ok) {
@@ -78,11 +103,26 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         setProducts(data.products);
         setCurrentPage(data.pagination.page);
         setTotalPages(data.pagination.totalPages);
+        setProductStats({
+          total: data.pagination.total,
+          inStock: data.stats.inStock,
+          lowStock: data.stats.lowStock,
+          outOfStock: data.stats.outOfStock,
+        });
       } catch (error) {
         console.error("Error loading products:", error);
         setProducts([]);
         setCurrentPage(1);
         setTotalPages(1);
+        setProductStats({
+          total: 0,
+          inStock: 0,
+          lowStock: 0,
+          outOfStock: 0,
+        });
+        setCategories(CATEGORIES);
+        setBanners(BANNERS);
+        setHeroSlides(SLIDES);
       }
     },
     [],
@@ -128,11 +168,17 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.error("Error loading data:", error);
+        setProducts([]);
+        setCurrentPage(1);
+        setTotalPages(1);
 
-        // Product fallback
-        setProducts(MOCK_PRODUCTS);
+        setProductStats({
+          total: 0,
+          inStock: 0,
+          lowStock: 0,
+          outOfStock: 0,
+        });
 
-        // Existing fallbacks
         setCategories(CATEGORIES);
         setBanners(BANNERS);
         setHeroSlides(SLIDES);
@@ -325,6 +371,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         currentPage,
         totalPages,
         loadProducts,
+        productStats,
         addProduct,
         updateProduct,
         deleteProduct,
