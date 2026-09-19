@@ -171,7 +171,9 @@ export default function AdminProductsPage() {
         products={products}
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={(page) => loadProducts(page)}
+        onPageChange={(page, category, search, stockStatus, sortBy) =>
+          loadProducts(page, category, search, stockStatus, sortBy)
+        }
         onFilterChange={(category, search, stockStatus, sortBy) =>
           loadProducts(1, category, search, stockStatus, sortBy)
         }

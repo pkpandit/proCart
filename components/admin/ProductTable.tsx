@@ -23,7 +23,13 @@ interface ProductTableProps {
   products: Product[];
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  onPageChange: (
+    page: number,
+    category?: string,
+    search?: string,
+    stockStatus?: string,
+    sortBy?: string,
+  ) => void;
   onFilterChange: (
     category?: string,
     search?: string,
@@ -51,6 +57,7 @@ export function ProductTable({
   const [sortBy, setSortBy] = useState<
     "title" | "price-asc" | "price-desc" | "rating"
   >("title");
+
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
 
@@ -58,6 +65,7 @@ export function ProductTable({
       selectedCategory === "All" ? undefined : selectedCategory,
       value,
       selectedStockStatus === "All" ? undefined : selectedStockStatus,
+      sortBy,
     );
   };
 
@@ -68,12 +76,19 @@ export function ProductTable({
       value === "All" ? undefined : value,
       searchTerm,
       selectedStockStatus === "All" ? undefined : selectedStockStatus,
+      sortBy,
     );
   };
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
-      onPageChange(page);
+      onPageChange(
+        page,
+        selectedCategory === "All" ? undefined : selectedCategory,
+        searchTerm,
+        selectedStockStatus === "All" ? undefined : selectedStockStatus,
+        sortBy,
+      );
     }
   };
 
@@ -85,15 +100,6 @@ export function ProductTable({
 
     onFilterChange(undefined, undefined, undefined, "title");
   };
-
-  /* const sortedProducts = useMemo(() => {
-    return [...products].sort((a, b) => {
-      if (sortBy === "price-asc") return a.price - b.price;
-      if (sortBy === "price-desc") return b.price - a.price;
-      if (sortBy === "rating") return b.rating - a.rating;
-      return a.title.localeCompare(b.title);
-    });
-  }, [products, sortBy]); */
 
   const startItem =
     products.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
@@ -143,6 +149,7 @@ export function ProductTable({
                 selectedCategory === "All" ? undefined : selectedCategory,
                 searchTerm,
                 value === "All" ? undefined : value,
+                sortBy,
               );
             }}
             className="rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
